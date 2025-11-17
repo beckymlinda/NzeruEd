@@ -61,28 +61,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show'); // optional
 });
 
-Route::middleware(['auth', 'is_admin'])->group(function () {
+// Admin Routes (role-based)
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
 
-    // Admin Dashboard
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
-
-    // Courses
-    Route::resource('admin/courses', CourseController::class);
-
-    // Assignments
-    Route::resource('admin/courses.assignments', AssignmentController::class);
-
-    // Submissions
-    Route::get('admin/assignments/{assignment}/submissions', [SubmissionController::class, 'index'])->name('admin.submissions.index');
-    Route::get('admin/submissions/{submission}/edit', [SubmissionController::class, 'edit'])->name('admin.submissions.edit');
-    Route::put('admin/submissions/{submission}', [SubmissionController::class, 'update'])->name('admin.submissions.update');
-});
-
-Route::prefix('admin')->middleware(['auth','is_admin'])->name('admin.')->group(function() {
+    // Dashboard
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
+    // Courses
     Route::resource('courses', AdminCourseController::class);
+
+    // Assignments
     Route::resource('assignments', AdminAssignmentController::class);
+
+    // Submissions (only index, edit, update, show)
     Route::resource('submissions', SubmissionController::class)->only(['index', 'edit', 'update', 'show']);
 });
 

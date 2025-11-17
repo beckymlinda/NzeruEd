@@ -12,7 +12,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password',
-        'role', 'form_level', 'payment_status', 'payment_expiry'
+        'role', 'form_level', 'payment_status', 'payment_expiry','is_admin',
     ];
 
     protected $dates = [

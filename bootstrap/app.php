@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
         'payment.approved' => \App\Http\Middleware\EnsurePaymentApproved::class,
-    ]);
+  'role' => \App\Http\Middleware\CheckRole::class,    ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
