@@ -1,12 +1,16 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\SubmissionController;
-use App\Http\Controllers\PaymentController;
-use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Admin\CourseController as AdminCourseController; 
+use App\Http\Controllers\Admin\AssignmentController as AdminAssignmentController;
+use App\Http\Controllers\Admin\SubmissionController as AdminSubmissionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,6 +53,37 @@ Route::middleware(['auth', 'payment.approved'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/payments/upload', [PaymentController::class, 'uploadForm'])->name('payment.upload');
     Route::post('/payments/upload', [PaymentController::class, 'upload'])->name('payment.upload.submit');
+});
+
+Route::middleware(['auth'])->group(function () {
+    // Courses
+    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show'); // optional
+});
+
+Route::middleware(['auth', 'is_admin'])->group(function () {
+
+    // Admin Dashboard
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+
+    // Courses
+    Route::resource('admin/courses', CourseController::class);
+
+    // Assignments
+    Route::resource('admin/courses.assignments', AssignmentController::class);
+
+    // Submissions
+    Route::get('admin/assignments/{assignment}/submissions', [SubmissionController::class, 'index'])->name('admin.submissions.index');
+    Route::get('admin/submissions/{submission}/edit', [SubmissionController::class, 'edit'])->name('admin.submissions.edit');
+    Route::put('admin/submissions/{submission}', [SubmissionController::class, 'update'])->name('admin.submissions.update');
+});
+
+Route::prefix('admin')->middleware(['auth','is_admin'])->name('admin.')->group(function() {
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+
+    Route::resource('courses', AdminCourseController::class);
+    Route::resource('assignments', AdminAssignmentController::class);
+    Route::resource('submissions', SubmissionController::class)->only(['index', 'edit', 'update', 'show']);
 });
 
 // Include Laravel Breeze or Jetstream auth routes

@@ -3,62 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Course;
 
 class CourseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // List all courses
     public function index()
     {
-        //
+        $courses = Course::all(); // You can paginate if needed
+        return view('courses.index', compact('courses'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // Optional: show a single course with its assignments
+    public function show(Course $course)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $assignments = $course->assignments;
+        return view('courses.show', compact('course', 'assignments'));
     }
 }

@@ -4,122 +4,150 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'NzeruEd') }}</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+<style>
+  body {
+    background: linear-gradient(to bottom, #f3e8ff, #d0f0ff); /* soft purple-blue blend */
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Navbar */
+  .navbar {
+      background: linear-gradient(90deg, #6a0dad, #1e90ff); /* purple to blue */
+      border-bottom: 2px solid #4b0082; /* deep purple border */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 56px;
+      z-index: 1050;
+  }
+
+  .navbar-brand {
+      color: #ffffff !important;
+      font-weight: bold;
+  }
+
+  /* Sidebar */
+  .sidebar {
+      width: 240px;
+      background: linear-gradient(to bottom, #4b0082, #1e90ff); /* deep purple to blue */
+      position: fixed;
+      top: 56px;         /* below navbar */
+      left: 0;
+      bottom: 0;
+      padding-top: 20px;
+      color: #ffffff;
+      z-index: 1040;
+      border-right: 2px solid #6a0dad; /* border in purple */
+  }
+
+  .sidebar a {
+      color: #ffffff !important;
+      padding: 12px 20px;
+      display: block;
+      text-decoration: none;
+  }
+
+  .sidebar a:hover {
+      background: rgba(106, 13, 173, 0.2); /* semi-transparent purple on hover */
+  }
+
+  /* MAIN CONTENT FIX (the important part) */
+  .content-wrapper {
+      margin-top: 56px;   /* pushes content below navbar */
+      margin-left: 240px; /* pushes content to the right of sidebar */
+      padding: 20px;
+      min-height: calc(100vh - 56px);
+  }
+
+  .dropdown-menu {
+      background: #d0f0ff; /* soft blue for dropdowns */
+  }
+</style>
+
+
 </head>
-<body class="font-sans antialiased bg-gradient-to-b from-yellow-50 via-yellow-100 to-yellow-50 min-h-screen text-gray-800">
-    <div class="min-h-screen flex flex-col">
-        {{-- Navigation --}}
-        <nav class="bg-yellow-200 border-b border-yellow-300 shadow-md">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex">
-                        {{-- Logo --}}
-                        <div class="shrink-0 flex items-center">
-                            <a href="{{ route('dashboard') }}" class="text-yellow-900 font-bold text-xl">
-                                NzeruEd
-                            </a>
-                        </div>
 
-                        {{-- Links --}}
-                        <div class="hidden sm:-my-px sm:ml-10 sm:flex space-x-4">
-                            @auth
-                                <a href="{{ route('lessons.index') }}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-300 {{ request()->routeIs('lessons.*') ? 'bg-yellow-300' : '' }}">
-                                    Lessons
-                                </a>
-                                <a href="{{ route('assignments.index', ['course'=>1]) }}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-300 {{ request()->routeIs('assignments.*') ? 'bg-yellow-300' : '' }}">
-                                    Assignments
-                                </a>
-                                <a href="{{ route('payment.upload') }}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-yellow-300 {{ request()->routeIs('payment.upload') ? 'bg-yellow-300' : '' }}">
-                                    Payments
-                                </a>
-                            @endauth
-                        </div>
-                    </div>
+<body>
 
-                    {{-- Profile / Logout --}}
-                    <div class="hidden sm:flex sm:items-center sm:ml-6">
-                        @auth
-                            <div class="ml-3 relative">
-                                <button type="button" class="flex items-center text-sm font-medium text-yellow-900 hover:text-yellow-800 focus:outline-none" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
-                                    <span>{{ Auth::user()->name }}</span>
-                                    <svg class="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
+<div class="d-flex">
+    {{-- Sidebar --}}
+    @auth
+    <div class="sidebar p-3">
+        <h4 class="text-center mb-4">Menu</h4>
 
-                                {{-- Dropdown menu --}}
-                                <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-yellow-50 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 hidden" id="dropdown-menu">
-                                    <div class="py-1">
-                                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-yellow-900 hover:bg-yellow-100">Profile</a>
-                                        <form method="POST" action="{{ route('logout') }}">
-                                            @csrf
-                                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-yellow-900 hover:bg-yellow-100">
-                                                Logout
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        @endauth
-                    </div>
+        <a href="{{ route('lessons.index') }}" class="d-block py-2 px-3 mb-2 {{ request()->routeIs('lessons.*') ? 'bg-dark' : '' }}">
+            Lessons
+        </a>
 
-                    {{-- Mobile menu button --}}
-                    <div class="-mr-2 flex items-center sm:hidden">
-                        <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-yellow-900 hover:text-yellow-700 hover:bg-yellow-100 focus:outline-none">
-                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                                <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M6 18L18 6"/>
-                            </svg>
+        <a href="{{ route('courses.index') }}" 
+   class="d-block py-2 px-3 mb-2 {{ request()->routeIs('courses.*') ? 'bg-dark' : '' }}">
+    Courses
+</a>
+
+
+        <a href="{{ route('payment.upload') }}" class="d-block py-2 px-3 mb-2 {{ request()->routeIs('payment.upload') ? 'bg-dark' : '' }}">
+            Payments
+        </a>
+    </div>
+    @endauth
+
+    {{-- Main Content Area --}}
+    <div class="flex-grow-1">
+
+        {{-- Top Navbar --}}
+        <nav class="navbar navbar-expand-lg navbar-dark px-4 shadow-sm">
+            <a class="navbar-brand" href="{{ route('dashboard') }}">NzeruEd</a>
+
+            <div class="ms-auto">
+                @auth
+                    <div class="dropdown">
+                        <button class="btn btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                       Hello    {{ Auth::user()->name }}
                         </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end mt-2">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a>
+                            </li>
+
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button class="dropdown-item text-danger">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
                     </div>
-                </div>
+                @endauth
             </div>
         </nav>
 
-        {{-- Responsive Menu (optional, Tailwind + Alpine.js needed) --}}
-        <div class="sm:hidden" x-show="open">
-            @auth
-                <a href="{{ route('lessons.index') }}" class="block px-4 py-2 text-sm text-yellow-900 hover:bg-yellow-100">Lessons</a>
-                <a href="{{ route('assignments.index', ['course'=>1]) }}" class="block px-4 py-2 text-sm text-yellow-900 hover:bg-yellow-100">Assignments</a>
-                <a href="{{ route('payment.upload') }}" class="block px-4 py-2 text-sm text-yellow-900 hover:bg-yellow-100">Payments</a>
-            @endauth
-        </div>
-
         {{-- Page Header --}}
         @isset($header)
-            <header class="bg-yellow-50 shadow">
-                <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
+            <div class="bg-light border-bottom py-3 px-4">
+                {{ $header }}
+            </div>
         @endisset
 
         {{-- Page Content --}}
-        <main class="flex-1">
-            @yield('content')
-        </main>
-    </div>
+        <main class="content-wrapper">
+    @yield('content')
+</main>
 
-    <script>
-        // Simple dropdown toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const btn = document.getElementById('user-menu-button');
-            const menu = document.getElementById('dropdown-menu');
-            if(btn){
-                btn.addEventListener('click', () => {
-                    menu.classList.toggle('hidden');
-                });
-            }
-        });
-    </script>
+
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
