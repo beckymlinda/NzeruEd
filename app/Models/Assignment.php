@@ -2,19 +2,39 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Assignment extends Model
 {
-    protected $fillable = ['course_id','title','instructions','due_at','attachment'];
+    use HasFactory;
 
-    public function course()
-    {
-        return $this->belongsTo(Course::class);
-    }
+    // Allow mass assignment for these fields
+    protected $fillable = [
+        'program_id',
+        'title',
+        'description',
+        'due_date',
+        'media_path',
+    ];
+
+protected $casts = [
+    'due_date' => 'date',
+];
 
     public function submissions()
     {
-        return $this->hasMany(Submission::class);
+        return $this->hasMany(AssignmentSubmission::class);
     }
+
+    public function program()
+    {
+        return $this->belongsTo(Program::class);
+    }
+    public function assignedUsers()
+{
+    return $this->belongsToMany(User::class, 'assignment_user', 'assignment_id', 'user_id')
+                ->withTimestamps();
+}
+
 }

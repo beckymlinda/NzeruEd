@@ -1,84 +1,193 @@
-@extends('layouts.app') {{-- Assuming your main layout is layouts/app.blade.php --}}
+<div class="yoga-auth-wrapper">
+    <div class="yoga-card">
 
-@section('title', 'Login')
+        <!-- Header -->
+        <div class="yoga-card-header text-center">
+            <div class="yoga-icon">🌿</div>
+            <h2>Welcome Back</h2>
+            <p>Continue your yoga journey</p>
+        </div>
 
-@section('content')
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header text-white text-center fw-bold" style="background: linear-gradient(90deg, #6a0dad, #1e90ff);">
-                    {{ __('Login to Your Account') }}
+        <!-- Body -->
+        <div class="yoga-card-body">
+
+            @if (session('status'))
+                <div class="alert alert-success text-center">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" value="{{ old('email') }}" required autofocus>
+                    @error('email') <small>{{ $message }}</small> @enderror
                 </div>
 
-                <div class="card-body">
-                    <!-- Session Status -->
-                    @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
+                <!-- Password -->
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+                    @error('password') <small>{{ $message }}</small> @enderror
+                </div>
+
+                <!-- Remember -->
+                <div class="remember-row">
+                    <label>
+                        <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                        Remember me
+                    </label>
+
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}">Forgot password?</a>
                     @endif
-
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
-
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-bold" style="color:#6a0dad;">{{ __('Email') }}</label>
-                            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
-                                   class="form-control border-purple bg-light-purple text-dark-purple">
-                            @error('email')
-                                <span class="text-danger small">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Password -->
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-bold" style="color:#6a0dad;">{{ __('Password') }}</label>
-                            <input id="password" type="password" name="password" required
-                                   class="form-control border-purple bg-light-purple text-dark-purple">
-                            @error('password')
-                                <span class="text-danger small">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Remember Me -->
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="remember" style="color:#1e90ff;">{{ __('Remember Me') }}</label>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-gradient text-white fw-bold" 
-                                    style="background: linear-gradient(90deg, #6a0dad, #1e90ff); border: none;">
-                                {{ __('Login') }}
-                            </button>
-                        </div>
-
-                        @if (Route::has('password.request'))
-                            <p class="mt-3 text-center">
-                                <a href="{{ route('password.request') }}" class="text-decoration-none" style="color:#6a0dad;">
-                                    {{ __('Forgot your password?') }}
-                                </a>
-                            </p>
-                        @endif
-
-                        <p class="text-center mt-2">
-                            <a href="{{ route('register') }}" class="btn btn-outline-primary w-50" 
-                               style="border-color:#6a0dad; color:#6a0dad;">
-                                {{ __('Register') }}
-                            </a>
-                        </p>
-                    </form>
                 </div>
+
+                <!-- Button -->
+                <button type="submit" class="yoga-btn">
+                    Log In
+                </button>
+            </form>
+
+            <div class="text-center mt-3">
+                <a href="{{ route('register') }}">New here? Create an account</a>
             </div>
+
         </div>
     </div>
 </div>
+ 
 
-<style>
-    .border-purple { border-color: #6a0dad !important; }
-    .bg-light-purple { background-color: #f3e6ff; }
-    .text-dark-purple { color: #4b0082; }
+ <style>
+html {
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #f4f6f3, #e8f0ec);
+}
+
+/* Wrapper */
+.yoga-auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+/* Card */
+.yoga-card {
+    width: 100%;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+/* Header */
+.yoga-card-header {
+    padding: 36px 24px;
+    background: linear-gradient(135deg, #8faea3, #6f8f7f);
+    color: #fff;
+}
+
+.yoga-icon {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.yoga-card-header h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.yoga-card-header p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Body */
+.yoga-card-body {
+    padding: 24px;
+}
+
+/* Inputs */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #fafafa;
+    font-size: 16px; /* 🔑 prevents mobile zoom */
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #6f8f7f;
+    background: #fff;
+}
+
+.form-group small {
+    color: #dc2626;
+    font-size: 0.85rem;
+}
+
+/* Remember row */
+.remember-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+}
+
+.remember-row a {
+    color: #6f8f7f;
+    text-decoration: none;
+}
+
+/* Button */
+.yoga-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient(135deg, #6f8f7f, #4f7f6d);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Links */
+.yoga-card-body a {
+    color: #4f7f6d;
+    font-size: 0.95rem;
+    text-decoration: none;
+}
+
+/* Desktop enhancement */
+@media (min-width: 768px) {
+    .yoga-card {
+        max-width: 420px;
+    }
+}
 </style>
-@endsection

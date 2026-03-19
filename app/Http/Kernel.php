@@ -54,5 +54,6 @@ class Kernel extends HttpKernel
 
         // ✅ LMS Custom Middleware
         'payment.approved' => EnsurePaymentApproved::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
     ];
 }
